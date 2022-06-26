@@ -1,4 +1,5 @@
 sudo: required
+language: generic 
 services:
   - docker
 
@@ -6,7 +7,8 @@ before_install:
   - docker build -t mjcloudguru/reat-test -f ./client/Dockerfile.dev ./client
 
 scripts:
-  - docker run mjcloudguru/reat-test npm run test -- -- coverage
+ # docker run -e CI=true mjcloudguru/docker-react npm run test -- --coverage
+  - docker run -e CI=true mjcloudguru/reat-test npm run test -- -- coverage
 
 after_success:
  - docker build -t mjcloudguru/multi-client ./client
