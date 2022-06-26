@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mjcloudguru/reat-test -f ./client/Dockerfile.dev ./client
+
+scripts:
+  - docker run mjcloudguru/reat-test npm run test -- -- coverage
+
+after_success:
+ - docker build -t mjcloudguru/multi-client ./client
+ - docker build -t mjcloudguru/multi-nginx ./nginx
+ - docker build -t mjcloudguru/multi-server ./server
+ - docker build -t mjcloudguru/multi-worker ./worker
+
+# take and push to docker hub
+ - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+ - docker push mjcloudguru/multi-client
+ - docker push mjcloudguru/multi-nginx
+ - docker push mjcloudguru/multi-server
+ - docker push mjcloudguru/multi-worker
